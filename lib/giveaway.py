@@ -200,13 +200,15 @@ class GiveAwayBot(object):
                         sub_button = await prize_page.querySelector("input[name='subscribe']")                        
                         enter = await prize_page.querySelector("input[name='enter']")                                                
                         subscribe = await prize_page.querySelector("#ts_en_ns_subscribe")
+                        #giveaways requiring a follow:
+                        #follow_button = await prize_page.querySelector('#ts_en_fo_follow')
                         string_val = await prize_page.content()
                         #print("Key:")
                         #print("Key ^")
                         if prize_box:
                             await asyncio.sleep(numpy.random.choice(RANDOM_VAL))
                             await prize_box.click()
-                            msg = Fore.MAGENTA + Style.BRIGHT + "    **** I should have clicked the prize pool?. ****"
+                            msg = Fore.MAGENTA + Style.BRIGHT + "    **** I clicked the prize box. ****"
                             print(msg)  
                         elif enter_button:
                             await enter_button.click()
@@ -220,7 +222,7 @@ class GiveAwayBot(object):
                             print(msg2)                        
                             await enter_video.click()
                         elif subscribe:
-                            msg = Fore.MAGENTA + Style.BRIGHT + "    **** Ohhhh an Amazon sponsored giveaway!~. ****"
+                            msg = Fore.MAGENTA + Style.BRIGHT + "    **** An Amazon-sponsored giveaway. ****"
                             print(msg)
                             await sub_button.click()
                             await asyncio.sleep(2)
@@ -259,7 +261,17 @@ class GiveAwayBot(object):
                             await asyncio.sleep(32)
                             await continue_button.click()
                             msg = Fore.MAGENTA + Style.BRIGHT + "    **** 30 Seconds is over, Entering Contest. ****"
-                            print(msg)
+                            print(msg)                            
+                        #giveaways requiring a follow:
+                        #elif follow_button:
+                            #await follow_button.click()
+                            #msg = Fore.MAGENTA + Style.BRIGHT + "    **** Follow-giveaway :: Entered. ****"
+                            #print(msg)
+                            #alternatively, close page without entering:
+                            #await asyncio.sleep(1)
+                            #await prize_page.close()
+                            #msg = Fore.MAGENTA + Style.BRIGHT + "    **** Follow-giveaway :: Close page. ****"
+                            #print(msg)
                         else:
                             await asyncio.sleep(1)
                             await prize_page.close()
@@ -280,7 +292,7 @@ class GiveAwayBot(object):
                         await asyncio.sleep(1)                     
                         await prize_page.close()
         except errors.NetworkError as e:
-            msg = Fore.MAGENTA + Style.BRIGHT + "    **** Not sure what happen, skipping?. ****"
+            msg = Fore.MAGENTA + Style.BRIGHT + "    **** Not sure what happened, skipping. ****"
             print(msg)
             await asyncio.sleep(1)                     
             await prize_page.close()
