@@ -267,7 +267,7 @@ class GiveAwayBot(object):
                             #await follow_button.click()
                             #msg = Fore.MAGENTA + Style.BRIGHT + "    **** Follow-giveaway :: Entered. ****"
                             #print(msg)
-                            #alternatively, close page without entering:
+                            #alternatively, close page without entering. This does not actually work, just crashes the bot. Help!
                             #await asyncio.sleep(1)
                             #await prize_page.close()
                             #msg = Fore.MAGENTA + Style.BRIGHT + "    **** Follow-giveaway :: Close page. ****"
