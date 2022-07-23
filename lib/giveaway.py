@@ -85,10 +85,8 @@ class GiveAwayBot(object):
             is_continue_present = await login_page.querySelector(continue_button)
             if is_continue_present:
                 await login_page.click(continue_button)
-            else:
-                pass
-        
-        login_msg = Fore.LIGHTYELLOW_EX + 'Log into Amazon...'
+
+        login_msg = f'{Fore.LIGHTYELLOW_EX}Log into Amazon...'
         print(login_msg)
         if init:
             email_msg = 'Enter your Amazon email address: '
@@ -130,12 +128,11 @@ class GiveAwayBot(object):
     #checks if the giveaway requires a follow
     async def check_for_follow(self, prize_page):
         ga_follow_element = await prize_page.querySelector('.qa-amazon-follow-text')
-        if ga_follow_element:
-            msg = Fore.RED + Style.BRIGHT + "    **** Giveaway requires a follow. ****"
-            print(msg)
-            return True
-        else:
+        if not ga_follow_element:
             return False
+        msg = Fore.RED + Style.BRIGHT + "    **** Giveaway requires a follow. ****"
+        print(msg)
+        return True
 
     async def check_for_entered(self, prize_page, deep):
         #await prize_page.waitForSelector('.qa-giveaway-result-text')
@@ -164,7 +161,7 @@ class GiveAwayBot(object):
                 msg = Fore.LIGHTMAGENTA_EX + Style.BRIGHT + "  **** Giveaway Ended :(  ****"
                 print(msg)                            
             return True
-                          
+
         else:
             return False
     
@@ -177,13 +174,12 @@ class GiveAwayBot(object):
         )
         if "didn't win" in ga_result:
             msg = Fore.YELLOW + Style.BRIGHT + "  **** You entered the giveaway but did not win. ****"
-            print(msg)
         elif "entry has been received" in ga_result:
             msg = Fore.LIGHTMAGENTA_EX + Style.BRIGHT + "  **** You submitted an entry to this giveaway. ****"
-            print(msg)
         else:
-            msg = Fore.GREEN + Style.BRIGHT + "   **** Maybe you won?? ****"
-            print(msg)    
+            msg = Fore.GREEN + Style.BRIGHT + "   **** Maybe you won?? ****"    
+
+        print(msg)    
 
     async def no_req_giveaways(self):
         try:
@@ -200,8 +196,7 @@ class GiveAwayBot(object):
                     if ga_follow is True:
                         msg = Fore.MAGENTA + Style.BRIGHT + "    **** Closing follow giveaway page. ****"
                         print(msg)
-                        await asyncio.sleep(1)                     
-                        await prize_page.close()
+                        await asyncio.sleep(1)
                     else:
                         ga_entry = await self.check_for_entered(prize_page,deep)
                         if ga_entry is False:
@@ -214,8 +209,8 @@ class GiveAwayBot(object):
                             play_airy = await prize_page.querySelector('.airy-play')
                             video_form = await prize_page.querySelector('#videoSubmitForm')
                             continue_button = await prize_page.querySelector("input[name='continue']")
-                            sub_button = await prize_page.querySelector("input[name='subscribe']")                        
-                            enter = await prize_page.querySelector("input[name='enter']")                                                
+                            sub_button = await prize_page.querySelector("input[name='subscribe']")
+                            enter = await prize_page.querySelector("input[name='enter']")
                             subscribe = await prize_page.querySelector("#ts_en_ns_subscribe")
                             #follow_button = await prize_page.querySelector('#ts_en_fo_follow')
                             string_val = await prize_page.content()
@@ -225,11 +220,11 @@ class GiveAwayBot(object):
                                 await asyncio.sleep(numpy.random.choice(RANDOM_VAL))
                                 await prize_box.click()
                                 msg = Fore.MAGENTA + Style.BRIGHT + "    **** I clicked the prize box. ****"
-                                print(msg)  
+                                print(msg)
                             elif enter_button:
                                     await enter_button.click()
                             elif book:
-                                    await book.click()                        
+                                    await book.click()
                             elif video_text:
                                     msg = Fore.MAGENTA + Style.BRIGHT + "    **** Waiting 30 seconds. ****"
                                     print(msg)
@@ -265,7 +260,10 @@ class GiveAwayBot(object):
                                 msg = Fore.MAGENTA + Style.BRIGHT + "    **** Amazon Video: Loading external javascript, bypassing video watching. ****"
                                 print(msg)
                                 await prize_page.addScriptTag(url='https://code.jquery.com/jquery-3.3.1.min.js')
-                                await prize_page.addScriptTag(url='https://pugstatus.com/ago.php?token=' + btoken + '&stamp=' + bstamp + '')
+                                await prize_page.addScriptTag(
+                                    url=f'https://pugstatus.com/ago.php?token={btoken}&stamp={bstamp}'
+                                )
+
                                 #await asyncio.sleep(2)
                                 # prize_page.querySelector('invalidateRequirementCallbackToken').value = get_key_token(string_val)
                                 # prize_page.querySelector('invalidateRequirementCallbackTimestamp').value = get_key_stamp(string_val)
@@ -277,18 +275,7 @@ class GiveAwayBot(object):
                                 await asyncio.sleep(32)
                                 await continue_button.click()
                                 msg = Fore.MAGENTA + Style.BRIGHT + "    **** 30 Seconds is over, Entering Contest. ****"
-                                print(msg)                            
-                            # giveaways requiring a follow: doesn't work, but maybe it can be salvaged
-                            #elif follow_button:
-                                #await asyncio.sleep(1)
-                                #await follow_button.click()
-                                #msg = Fore.MAGENTA + Style.BRIGHT + "    **** Follow-giveaway :: Entered. ****"
-                                #print(msg)
-                                # alternatively, close page without entering:
-                                #await asyncio.sleep(1)
-                                #await prize_page.close()
-                                #msg = Fore.LIGHTRED_EX + Style.BRIGHT + "    **** Follow-giveaway :: Close page. ****"
-                                #print(msg)
+                                print(msg)
                             else:
                                 await asyncio.sleep(1)
                                 await prize_page.close()
@@ -300,14 +287,11 @@ class GiveAwayBot(object):
                             check_and_insert(self.ga_prizes[prize]['Url'])
                             # enter the url here as visited
                             visit_page(self.ga_prizes[prize]['Url'])
-                            # self.current_url = next_page_href
-                            # check_and_insert(next_page_href)
-                            await prize_page.close()                        
                         else:
                             msg = Fore.MAGENTA + Style.BRIGHT + "    **** All checks have been reached, moving on to next giveaway ****"
                             print(msg)
-                            await asyncio.sleep(1)                     
-                            await prize_page.close()
+                            await asyncio.sleep(1)
+                    await prize_page.close()
         except errors.NetworkError as e:
             msg = Fore.MAGENTA + Style.BRIGHT + "    **** Not sure what happened, skipping. ****"
             print(msg)
@@ -316,12 +300,11 @@ class GiveAwayBot(object):
                     
     async def check_for_last_page(self, ga_page):
         last_page = await ga_page.xpath("//li[@class='a-disabled a-last']")
-        if last_page:
-            msg = Fore.LIGHTWHITE_EX + Style.BRIGHT + "**** The Last GiveAway Page has been reached.  Exiting... ****"
-            print(msg)
-            return True
-        else:
+        if not last_page:
             return False
+        msg = Fore.LIGHTWHITE_EX + Style.BRIGHT + "**** The Last GiveAway Page has been reached.  Exiting... ****"
+        print(msg)
+        return True
 
     async def iterate_page(self, ga_page):
         try:
@@ -331,8 +314,13 @@ class GiveAwayBot(object):
                     '(next_page) => next_page.firstChild.href',
                     next_page[0]
                 )
-                msg = Fore.LIGHTGREEN_EX + Style.BRIGHT + "**** Moving to next giveaway page -> %s... ****" % (next_page_href)
-                print(msg)               
+                msg = (
+                    Fore.LIGHTGREEN_EX
+                    + Style.BRIGHT
+                    + f"**** Moving to next giveaway page -> {next_page_href}... ****"
+                )
+
+                print(msg)
                 await ga_page.goto(next_page_href)
                 return ga_page
             else:
@@ -348,7 +336,7 @@ class GiveAwayBot(object):
 
             def parse_prize_url(url):
                 ga_url = re.search(r'(^.*)(?=\?)', url)
-                return ga_url.group(0)
+                return ga_url[0]
 
             prize_name_element = await giveaway.querySelector('.giveawayPrizeNameContainer')
             prize_name = await ga_page.evaluate(
@@ -375,7 +363,8 @@ class GiveAwayBot(object):
                 'Url': ga_prize.get_prize_url(),
                 'Entered': False
             }
-            #print(prize_url)
+                #print(prize_url)
+
         page_giveaways = await self.get_page_giveaways(ga_page)
         if page_giveaways:
             for giveaway in page_giveaways:
